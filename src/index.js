@@ -1,5 +1,7 @@
 const { body } = document;
+
 const canvas = document.createElement('canvas');
+const gameOverEl = document.createElement('div');
 
 const ctx = canvas.getContext('2d');
 
@@ -20,6 +22,7 @@ let ballY = 350;
 
 let playerMoved = false;
 let batContact = false;
+let newGame = true;
 
 let speedY;
 let speedX;
@@ -27,6 +30,8 @@ let trajectoryX;
 
 let scorePlayer = 0;
 let scoreComputer = 0;
+let winningScore = 2;
+let isGameOver = false;
 
 function createCanvas() {
     canvas.height = height;
@@ -98,6 +103,7 @@ function ballBoundries() {
             speedX = trajectoryX * 0.3;
         } else if (ballY > height) {
             ballReset();
+            scoreComputer++;
         }
     }
 
@@ -116,7 +122,33 @@ function ballBoundries() {
             speedX = trajectoryX * 0.3;
         } else if (ballY < 0) {
             ballReset();
+            scorePlayer++;
         }
+    }
+}
+function showWinnerScreen(winner) {
+    // alert(`And the winner is ${winner}`);
+    canvas.hidden = true;
+    // Container
+    gameOverEl.textContent = '';
+    gameOverEl.classList.add('game-over-container');
+    // Title
+    const title = document.createElement('h1');
+    title.textContent = `${winner} Wins!`;
+    // Button
+    const playAgainBtn = document.createElement('button');
+    playAgainBtn.setAttribute('onclick', 'startGame()');
+    playAgainBtn.textContent = 'Play Again';
+    // Append
+    gameOverEl.append(title, playAgainBtn);
+    body.appendChild(gameOverEl);
+}
+
+function gameOver() {
+    if (scorePlayer === winningScore || scoreComputer === winningScore) {
+        isGameOver = true;
+        let winner = scorePlayer > scoreComputer ? 'Player' : 'Computer';
+        showWinnerScreen(winner);
     }
 }
 
@@ -124,10 +156,19 @@ function animate() {
     renderCanvas();
     ballMove();
     ballBoundries();
-    window.requestAnimationFrame(animate);
+    gameOver();
+    if (!isGameOver) {
+        window.requestAnimationFrame(animate);
+    }
 }
 
 const startGame = () => {
+    if (isGameOver && !newGame) {
+        body.removeChild(gameOverEl);
+        canvas.hidden = false;
+    }
+    isGameOver = false;
+    newGame = false;
     scorePlayer = 0;
     scoreComputer = 0;
     ballReset();
