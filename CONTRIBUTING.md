@@ -79,3 +79,6 @@ Please be considerate towards maintainers when raising issues or presenting pull
 Respect the maintainer's decision and not be upset or abusive if your submission is not used.
 
 **Happy coding**!
+
+Contributers:
+Cosnavel
